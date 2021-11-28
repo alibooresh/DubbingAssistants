@@ -44,72 +44,74 @@ def displaySentences(sentences):
         # event.wait(1000)
 
 
-# Open a file: file
-file = open('subtitle.srt', mode='r', encoding='utf-8')
-subtitleLines = file.read()
-splited = subtitleLines.split('\n')
-lines = []
-for line in splited:
-    if(len(line) > 0):
-        lines.append(line)
-print('starsting \n')
-file.close()
-# print(datetime.time(hour=0, minute=10, second=25, microsecond=100))
-strToDate("00:40:22,5654")
-sentences = []
+def mainProccess():
 
-lineStartTime = ''
-lineEndTime = ''
-lineTimeLen = 0
+    file = open('subtitle.srt', mode='r', encoding='utf-8')
+    subtitleLines = file.read()
+    splited = subtitleLines.split('\n')
+    lines = []
+    for line in splited:
+        if(len(line) > 0):
+            lines.append(line)
+    print('starsting \n')
+    file.close()
+    # print(datetime.time(hour=0, minute=10, second=25, microsecond=100))
+    strToDate("00:40:22,5654")
+    sentences = []
 
-sentenceStartTime = ''
-sentenceEndTime = ''
-sentenceTimeLen = 0
-sentence = ''
-print('starsting \n')
-for index in range(0, len(lines)):
+    lineStartTime = ''
+    lineEndTime = ''
+    lineTimeLen = 0
 
-	# get time information
+    sentenceStartTime = ''
+    sentenceEndTime = ''
+    sentenceTimeLen = 0
+    sentence = ''
+    print('starsting \n')
+    for index in range(0, len(lines)):
 
-    isTime = re.search(r'-->', lines[index], re.M | re.I)
-    isLineNum = re.search(r'^\d+', lines[index], re.M | re.I)
-    isNewLine = re.search(r'^"\\"', lines[index], re.M | re.I)
-    isText = not(bool(re.search(r'-->', lines[index], re.M | re.I))) and not(
-        bool(re.search(r'^\d+', lines[index], re.M | re.I)))
-    isEndOfSentence = re.search(r'\.', lines[index], re.M | re.I)
-    if isTime:
+    	# get time information
 
-        timeInfo = lines[index].split("-->")
+        isTime = re.search(r'-->', lines[index], re.M | re.I)
+        isLineNum = re.search(r'^\d+', lines[index], re.M | re.I)
+        isNewLine = re.search(r'^"\\"', lines[index], re.M | re.I)
+        isText = not(bool(re.search(r'-->', lines[index], re.M | re.I))) and not(
+            bool(re.search(r'^\d+', lines[index], re.M | re.I)))
+        isEndOfSentence = re.search(r'\.', lines[index], re.M | re.I)
+        if isTime:
 
-        lineStartTime = timeInfo[0]
-        lineEndTime = timeInfo[1]
+            timeInfo = lines[index].split("-->")
 
-        sentenceStartTime = strToDate(lineStartTime)
+            lineStartTime = timeInfo[0]
+            lineEndTime = timeInfo[1]
 
-        # search = re.search( r'\.', lines[index+1], re.M|re.I)
-        sentence = sentence+' '+lines[index+1]
-        if(index < (len(lines)-2)):
-            if(len(lines[index+2]) < 1):
-                print(lines[index+2])
-            else:
-                sentence = sentence+' '+lines[index+2]
-        sentenceEndTime = strToDate(lineEndTime)
-        # sentenceTimeLen = sentenceEndTime - sentenceStartTime
+            sentenceStartTime = strToDate(lineStartTime)
 
-        tmpDic = {
-            "sentenceStartTime": sentenceStartTime,
-            "sentenceEndTime": sentenceEndTime,
-            "sentenceTimeLen": sentenceTimeLen,
-            "sentence": sentence
-        }
+            # search = re.search( r'\.', lines[index+1], re.M|re.I)
+            sentence = sentence+' '+lines[index+1]
+            if(index < (len(lines)-2)):
+                if(len(lines[index+2]) < 1):
+                    print(lines[index+2])
+                else:
+                    sentence = sentence+' '+lines[index+2]
+            sentenceEndTime = strToDate(lineEndTime)
+            # sentenceTimeLen = sentenceEndTime - sentenceStartTime
 
-        sentences.append(tmpDic)
-        sentenceStartTime = ''
-        sentenceEndTime = ''
-        sentenceTimeLen = 0
-        sentence = ''
-        #reset
-print("\t\t********All sentences is showing below: ********")
-print(sentences)
-print(len(sentences))
-displaySentences(sentences)
+            tmpDic = {
+                "sentenceStartTime": sentenceStartTime,
+                "sentenceEndTime": sentenceEndTime,
+                "sentenceTimeLen": sentenceTimeLen,
+                "sentence": sentence
+            }
+
+            sentences.append(tmpDic)
+            sentenceStartTime = ''
+            sentenceEndTime = ''
+            sentenceTimeLen = 0
+            sentence = ''
+            #reset
+    print("\t\t********All sentences is showing below: ********")
+    print(sentences)
+    print(len(sentences))
+    displaySentences(sentences)
+    return sentences
